@@ -47,6 +47,7 @@ class Graph extends Component<IProps, {}> {
     if (this.table) {
       // Load the `table` in the `<perspective-viewer>` DOM reference.
 
+      elem.load(this.table);
       // Add more Perspective configurations here.
       elem.setAttribute('view', 'y_line'); //type of plot we are interested in
       elem.setAttribute('column-pivots', '["stock"]'); //Columns axis datapoint
@@ -54,7 +55,7 @@ class Graph extends Component<IProps, {}> {
       elem.setAttribute('columns', '["top_ask_price"]'); //value to fill the graph
       elem.setAttribute('aggregates', `{"stock":"distinct count", "top_ask_price":"avg", "top_bid_price":"avg", "timestamp":"distinct count"}`); //helps to avoid duplicate data
 
-      elem.load(this.table);
+      
     }
   }
 
