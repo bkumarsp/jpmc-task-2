@@ -8,6 +8,7 @@ import './App.css';
  */
 interface IState {
   data: ServerRespond[],
+  showGraph: boolean,
 }
 
 /**
@@ -22,6 +23,7 @@ class App extends Component<{}, IState> {
       // data saves the server responds.
       // We use this state to parse data down to the child element (Graph) as element property
       data: [],
+      showGraph: false //initially graph is not displayed to user
     };
   }
 
@@ -29,18 +31,35 @@ class App extends Component<{}, IState> {
    * Render Graph react component with state.data parse as property data
    */
   renderGraph() {
-    return (<Graph data={this.state.data}/>)
+    if(this.state.showGraph) //Render the graph only after user clicks on StartStreaming button
+      return (<Graph data={this.state.data}/>)
   }
 
   /**
    * Get new data from server and update the state with the new data
    */
   getDataFromServer() {
-    DataStreamer.getData((serverResponds: ServerRespond[]) => {
-      // Update the state by creating a new array of data that consists of
-      // Previous data in the state and the new data from server
-      this.setState({ data: [...this.state.data, ...serverResponds] });
-    });
+    
+    const myInterval = setInterval(() => {
+      let counter = 0;
+      DataStreamer.getData((serverResponds: ServerRespond[]) => {
+        // Update the state by creating a new array of data that consists of
+        // Previous data in the state and the new data from server
+        this.setState(
+          { data: serverResponds , //removed previous duplicate data
+            showGraph: true,  // makes the graph visible once streaming starts
+          }          
+        );
+      });
+      counter++;
+
+      if(counter > 1000){
+        // Remove the interval once streaming stopped.
+        clearInterval(myInterval)
+      }
+    }, 100);
+
+ 
   }
 
   /**
